@@ -1,0 +1,68 @@
+# Dependencies
+node_modules/
+.flutter-plugins
+.flutter-plugins-dependencies
+.dart_tool/
+.pub-cache/
+.pub/
+build/
+*.g.dart
+*.freezed.dart
+
+# .NET
+**/bin/
+**/obj/
+*.user
+.vs/
+*.suo
+*.nupkg
+
+# Next.js
+.next/
+out/
+dist/
+
+# Environment files (never commit real secrets)
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+
+# IDE
+.idea/
+.vscode/settings.json
+*.iml
+
+# Test results
+TestResults/
+coverage/
+*.coverage
+
+# Flutter
+/ios/Flutter/flutter_export_environment.sh
+/ios/Flutter/App.framework
+/ios/Flutter/Flutter.framework
+/ios/Flutter/Flutter.podspec
+/ios/Runner/GeneratedPluginRegistrant.h
+/ios/Runner/GeneratedPluginRegistrant.m
+*.xcworkspace/
+*.xcuserdata/
+Podfile.lock
+
+# Android
+*.apk
+*.aab
+*.keystore
+android/.gradle/
+android/local.properties
+
+# Docker volumes (never committed)
+volumes/
+
+# Logs
+*.log
+logs/

@@ -1,0 +1,130 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  # ── API Build & Test ────────────────────────────────────────────────────────
+  api:
+    name: API (ASP.NET Core)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/api
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore MyApp.sln
+
+      - name: Build
+        run: dotnet build MyApp.sln --no-restore -c Release
+
+      - name: Test
+        run: dotnet test MyApp.sln --no-build -c Release --verbosity normal \
+          --collect:"XPlat Code Coverage" \
+          --results-directory ./TestResults
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: api-coverage
+          path: src/api/TestResults
+
+  # ── Dashboard Build ─────────────────────────────────────────────────────────
+  dashboard:
+    name: Dashboard (Next.js)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/dashboard
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: src/dashboard/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run type-check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:5000
+          NEXT_PUBLIC_SIGNALR_URL: http://localhost:5000
+
+  # ── Flutter Build ───────────────────────────────────────────────────────────
+  mobile:
+    name: Mobile (Flutter)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/mobile
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.x'
+          channel: 'stable'
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        run: flutter test
+
+      - name: Build APK (debug)
+        run: flutter build apk --debug
+
+  # ── Docker Build Validation ─────────────────────────────────────────────────
+  docker:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build API image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./src/api
+          file: ./docker/api/Dockerfile
+          push: false
+          tags: myapp/api:ci
+
+      - name: Build Dashboard image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./src/dashboard
+          file: ./docker/dashboard/Dockerfile
+          push: false
+          tags: myapp/dashboard:ci
+          build-args: |
+            NEXT_PUBLIC_API_URL=http://localhost:5000
+            NEXT_PUBLIC_SIGNALR_URL=http://localhost:5000

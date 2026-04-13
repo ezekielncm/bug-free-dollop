@@ -1,0 +1,30 @@
+# Production overrides
+services:
+  api:
+    image: ${DOCKER_REGISTRY:-myapp}/api:${IMAGE_TAG:-latest}
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+
+  dashboard:
+    image: ${DOCKER_REGISTRY:-myapp}/dashboard:${IMAGE_TAG:-latest}
+    environment:
+      - NEXT_PUBLIC_API_URL=${API_URL}
+      - NEXT_PUBLIC_SIGNALR_URL=${API_URL}
+    deploy:
+      replicas: 2
+
+  db:
+    ports: []   # Don't expose DB in production
+
+  redis:
+    ports: []
+
+  rabbitmq:
+    ports:
+      - "15672:15672"   # Keep management UI, hide AMQP
