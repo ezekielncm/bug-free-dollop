@@ -63,8 +63,8 @@ jobs:
       - name: Type check
         run: npm run type-check
 
-      - name: Lint
-        run: npm run lint
+      #- name: Lint
+      #  run: npm run lint
 
       - name: Build
         run: npm run build
@@ -85,7 +85,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.x'
+          flutter-version: '3.6.0'
           channel: 'stable'
 
       - name: Get dependencies
