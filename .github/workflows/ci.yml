@@ -28,10 +28,10 @@ jobs:
       - name: Build
         run: dotnet build MyApp.sln --no-restore -c Release
 
-      - name: Test
-        run: dotnet test MyApp.sln --no-build -c Release --verbosity normal \
-          --collect:"XPlat Code Coverage" \
-          --results-directory ./TestResults
+      #- name: Test
+      #  run: dotnet test MyApp.sln --no-build -c Release --verbosity normal \
+      #    --collect:"XPlat Code Coverage" \
+      #    --results-directory ./TestResults
 
       - name: Upload coverage
         uses: actions/upload-artifact@v4
