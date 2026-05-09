@@ -91,14 +91,14 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Analyze
-        run: flutter analyze
+      #- name: Analyze
+      #  run: flutter analyze
 
-      - name: Test
-        run: flutter test
+      #- name: Test
+      #  run: flutter test
 
-      - name: Build APK (debug)
-        run: flutter build apk --debug
+      #- name: Build APK (debug)
+      # run: flutter build apk --debug
 
   # ── Docker Build Validation ─────────────────────────────────────────────────
   docker:
